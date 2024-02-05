@@ -1,3 +1,9 @@
 import { app } from './server/server'
 
-app.listen(3001, () => console.log('Server running on 3001: http://localhost:3001'))
+import dotenv from 'dotenv'
+
+dotenv.config()
+
+app.listen(process.env.PORT || 3001, () =>
+  console.log('Server running on 3001: http://localhost:3001')
+)
