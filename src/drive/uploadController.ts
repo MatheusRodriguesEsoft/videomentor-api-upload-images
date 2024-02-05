@@ -6,7 +6,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME
-
+console.log(process.env.AWS_S3_BUCKET_NAME)
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 
