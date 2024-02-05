@@ -24,8 +24,9 @@ export const uploadHandler = async (req: Request, res: Response) => {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' })
     }
-
-    const uploadedFile = req.file
+    const currentDate = new Date()
+    const timestamp = currentDate.toISOString()
+    const { originalname: key, buffer: Body, mimetype: ContentType } = req.file
 
     const s3Client = new S3Client({
       region: process.env.AWS_DEFAULT_REGION,
@@ -37,14 +38,14 @@ export const uploadHandler = async (req: Request, res: Response) => {
 
     const params = {
       Bucket: BUCKET_NAME,
-      Key: uploadedFile.originalname,
-      Body: uploadedFile.buffer,
-      ContentType: uploadedFile.mimetype,
+      Key: timestamp + key,
+      Body,
+      ContentType,
     }
 
     await s3Client.send(new PutObjectCommand(params))
 
-    const fileUrl = `https://${BUCKET_NAME}.s3.amazonaws.com/${uploadedFile.originalname}`
+    const fileUrl = `https://${BUCKET_NAME}.s3.amazonaws.com/${params.Key}`
 
     return res.json({ fileUrl })
   } catch (error) {
