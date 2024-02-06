@@ -1,7 +1,7 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import dotenv from 'dotenv'
 import { Request, Response } from 'express'
 import multer from 'multer'
-import dotenv from 'dotenv'
 
 dotenv.config()
 
@@ -26,7 +26,7 @@ export const uploadHandler = async (req: Request, res: Response) => {
     }
     const currentDate = new Date()
     const timestamp = currentDate.toISOString()
-    const { originalname: key, buffer: Body, mimetype: ContentType } = req.file
+    const { originalname: Key, buffer: Body, mimetype: ContentType } = req.file
 
     const s3Client = new S3Client({
       region: process.env.AWS_DEFAULT_REGION,
@@ -38,7 +38,7 @@ export const uploadHandler = async (req: Request, res: Response) => {
 
     const params = {
       Bucket: BUCKET_NAME,
-      Key: timestamp + key,
+      Key,
       Body,
       ContentType,
     }
@@ -46,8 +46,9 @@ export const uploadHandler = async (req: Request, res: Response) => {
     await s3Client.send(new PutObjectCommand(params))
 
     const fileUrl = `https://${BUCKET_NAME}.s3.amazonaws.com/${params.Key}`
+    const fileName = params.Key
 
-    return res.json({ fileUrl })
+    return res.json({ fileUrl, fileName })
   } catch (error) {
     console.error(error)
     return res.status(500).json({ error: 'Internal Server Error' })

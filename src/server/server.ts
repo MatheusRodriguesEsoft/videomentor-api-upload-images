@@ -1,7 +1,6 @@
-import { uploadController } from '../drive/uploadController'
-import { deleteImages } from '../drive/deleteImages'
-import express from 'express'
 import cors from 'cors'
+import express from 'express'
+import { uploadController } from '../drive/uploadController'
 
 const app = express()
 
@@ -13,7 +12,5 @@ app.get('/', (req, res) => {
 })
 
 app.post('/upload', uploadController)
-
-app.delete('/delete/:imageId', deleteImages)
 
 export { app }
