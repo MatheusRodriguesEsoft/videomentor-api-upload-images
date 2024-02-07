@@ -26,7 +26,7 @@ export const uploadHandler = async (req: Request, res: Response) => {
     }
     const currentDate = new Date()
     const timestamp = currentDate.toISOString()
-    const { originalname: Key, buffer: Body, mimetype: ContentType } = req.file
+    const { originalname: key, buffer: Body, mimetype: ContentType } = req.file
 
     const s3Client = new S3Client({
       region: process.env.AWS_DEFAULT_REGION,
@@ -38,7 +38,7 @@ export const uploadHandler = async (req: Request, res: Response) => {
 
     const params = {
       Bucket: BUCKET_NAME,
-      Key,
+      Key: `${timestamp}-${key}`,
       Body,
       ContentType,
     }
